@@ -1,9 +1,14 @@
-export const getBotResponse = async (character, history, newMessage, proxyConfig) => {
+export const getBotResponse = async (character, history, newMessage, proxyConfig, persona) => {
   const { apiKey, proxyUrl, modelName } = proxyConfig;
+
+  let systemContent = `You are ${character.name}. ${character.lore}`;
+  if (persona) {
+    systemContent += `\n\nThe user you are talking to has the following persona: ${persona}`;
+  }
 
   const systemMessage = {
     role: 'system',
-    content: `You are ${character.name}. ${character.lore}`,
+    content: systemContent,
   };
 
   const messages = [

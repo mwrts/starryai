@@ -22,6 +22,26 @@ export const loadCharacters = () => {
   }
 };
 
+const PERSONA_KEY = 'janitor_ai_clone_persona';
+
+export const savePersona = (persona) => {
+  try {
+    localStorage.setItem(PERSONA_KEY, persona);
+  } catch (e) {
+    console.error("Could not save persona.", e);
+  }
+};
+
+export const loadPersona = () => {
+  try {
+    const persona = localStorage.getItem(PERSONA_KEY);
+    return persona || '';
+  } catch (e) {
+    console.error("Could not load persona.", e);
+    return '';
+  }
+};
+
 const CHAT_HISTORY_KEY = 'janitor_ai_clone_chat_history';
 
 export const saveChatHistory = (characterId, messages) => {

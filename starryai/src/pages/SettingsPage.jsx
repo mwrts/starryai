@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styles from './SettingsPage.module.css';
-import { loadProxyConfigs, saveProxyConfigs } from '../utils/localStorage';
+import { loadProxyConfigs, saveProxyConfigs, loadPersona, savePersona } from '../utils/localStorage';
 import { ThemeContext, themes } from '../contexts/ThemeContext';
 
 const SettingsPage = () => {
@@ -8,12 +8,14 @@ const SettingsPage = () => {
   const [apiKey, setApiKey] = useState('');
   const [proxyUrl, setProxyUrl] = useState('');
   const [modelName, setModelName] = useState('');
+  const [persona, setPersona] = useState('');
 
   const { theme, setTheme } = useContext(ThemeContext);
   const [customTheme, setCustomTheme] = useState(theme);
 
   useEffect(() => {
     setConfigs(loadProxyConfigs());
+    setPersona(loadPersona());
   }, []);
 
   useEffect(() => {
@@ -52,9 +54,37 @@ const SettingsPage = () => {
     setTheme(newCustomTheme);
   };
 
+  const handlePersonaChange = (e) => {
+    setPersona(e.target.value);
+  };
+
+  const handlePersonaSubmit = (e) => {
+    e.preventDefault();
+    savePersona(persona);
+    alert('Persona saved successfully!');
+  };
+
   return (
     <div className={styles.page}>
       <h2>Settings</h2>
+
+      <div className={styles.section}>
+        <h3>User Persona</h3>
+        <form onSubmit={handlePersonaSubmit} className={styles.form}>
+          <div className={styles.formGroup}>
+            <label htmlFor="persona">Your Persona</label>
+            <textarea
+              id="persona"
+              name="persona"
+              rows="5"
+              value={persona}
+              onChange={handlePersonaChange}
+              placeholder="Describe yourself to the bot. This will be sent with every message."
+            ></textarea>
+          </div>
+          <button type="submit" className={styles.submitButton}>Save Persona</button>
+        </form>
+      </div>
 
       <div className={styles.section}>
         <h3>Theme Customization</h3>

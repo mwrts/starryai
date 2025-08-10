@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import styles from './ChatPage.module.css';
 import MessageList from '../components/MessageList';
 import ChatInput from '../components/ChatInput';
-import { loadCharacters, loadProxyConfigs, loadChatHistory, saveChatHistory } from '../utils/localStorage';
+import { loadCharacters, loadProxyConfigs, loadChatHistory, saveChatHistory, loadPersona } from '../utils/localStorage';
 import { getBotResponse } from '../utils/api';
 
 const ChatPage = ({ characterId }) => {
   const [character, setCharacter] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [persona, setPersona] = useState('');
 
   useEffect(() => {
+    setPersona(loadPersona());
     const characters = loadCharacters();
     const foundCharacter = characters.find(c => c.id.toString() === characterId);
     if (foundCharacter) {
@@ -47,7 +49,7 @@ const ChatPage = ({ characterId }) => {
 
     setIsTyping(true);
     try {
-      const botText = await getBotResponse(character, newMessages, text, proxyConfig);
+      const botText = await getBotResponse(character, newMessages, text, proxyConfig, persona);
       const botMessage = { sender: 'bot', text: botText };
       setMessages([...newMessages, botMessage]);
     // eslint-disable-next-line no-unused-vars
@@ -77,7 +79,7 @@ const ChatPage = ({ characterId }) => {
 
     setIsTyping(true);
     try {
-      const botText = await getBotResponse(character, messages, "", proxyConfig);
+      const botText = await getBotResponse(character, messages, "", proxyConfig, persona);
       const botMessage = { sender: 'bot', text: botText };
       setMessages([...messages, botMessage]);
     // eslint-disable-next-line no-unused-vars
