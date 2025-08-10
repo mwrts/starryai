@@ -23,8 +23,15 @@ function App() {
   let pageProps = {};
 
   if (route.startsWith('#/chat/')) {
-    const characterId = route.split('/')[2];
+    const parts = route.split('/');
+    const characterId = parts[2];
+    const chatId = parts[3];
     CurrentPage = ChatPage;
+    pageProps = { characterId, chatId };
+  } else if (route.startsWith('#/character/edit/')) {
+    const parts = route.split('/');
+    const characterId = parts[3];
+    CurrentPage = CharacterCreatorPage;
     pageProps = { characterId };
   } else {
     switch (route) {
