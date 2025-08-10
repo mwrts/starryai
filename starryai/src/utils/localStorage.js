@@ -73,7 +73,7 @@ export const loadPersona = () => {
 const CHAT_HISTORY_KEY = 'janitor_ai_clone_chat_history';
 
 // Loads all chat histories and handles migration from old format.
-const loadAllChatHistories = () => {
+export const loadAllChatHistories = () => {
   try {
     const serializedState = localStorage.getItem(CHAT_HISTORY_KEY);
     if (serializedState === null) {

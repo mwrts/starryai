@@ -51,7 +51,7 @@ const ChatPage = ({ characterId, chatId }) => {
 
     setIsTyping(true);
     try {
-      const botText = await getBotResponse(character, newMessages, text, proxyConfig, persona, generationSettings);
+      const botText = await getBotResponse(character, newMessages, proxyConfig, persona, generationSettings);
       const botMessage = { sender: 'bot', text: botText };
       setMessages([...newMessages, botMessage]);
     // eslint-disable-next-line no-unused-vars
@@ -81,7 +81,7 @@ const ChatPage = ({ characterId, chatId }) => {
 
     setIsTyping(true);
     try {
-      const botText = await getBotResponse(character, messages, "", proxyConfig, persona, generationSettings);
+      const botText = await getBotResponse(character, messages, proxyConfig, persona, generationSettings);
       const botMessage = { sender: 'bot', text: botText };
       setMessages([...messages, botMessage]);
     // eslint-disable-next-line no-unused-vars

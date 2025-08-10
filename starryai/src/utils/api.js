@@ -1,4 +1,4 @@
-export const getBotResponse = async (character, history, newMessage, proxyConfig, persona, generationSettings) => {
+export const getBotResponse = async (character, history, proxyConfig, persona, generationSettings) => {
   const { apiKey, proxyUrl, modelName } = proxyConfig;
   const { maxTokens, contextWindowSize } = generationSettings;
 
@@ -30,10 +30,6 @@ export const getBotResponse = async (character, history, newMessage, proxyConfig
   }
 
   const messages = [systemMessage, ...contextMessages];
-
-  if (newMessage && newMessage.length > 0) {
-    messages.push({ role: 'user', content: newMessage });
-  }
 
   const body = {
     model: modelName,
