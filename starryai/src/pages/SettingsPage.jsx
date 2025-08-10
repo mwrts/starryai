@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styles from './SettingsPage.module.css';
-import { loadProxyConfigs, saveProxyConfigs } from '../utils/localStorage';
+import { loadProxyConfigs, saveProxyConfigs, loadPersona, savePersona, loadGenerationSettings, saveGenerationSettings } from '../utils/localStorage';
 import { ThemeContext, themes } from '../contexts/ThemeContext';
 
 const SettingsPage = () => {
@@ -8,12 +8,16 @@ const SettingsPage = () => {
   const [apiKey, setApiKey] = useState('');
   const [proxyUrl, setProxyUrl] = useState('');
   const [modelName, setModelName] = useState('');
+  const [persona, setPersona] = useState('');
+  const [generationSettings, setGenerationSettings] = useState(loadGenerationSettings());
 
   const { theme, setTheme } = useContext(ThemeContext);
   const [customTheme, setCustomTheme] = useState(theme);
 
   useEffect(() => {
     setConfigs(loadProxyConfigs());
+    setPersona(loadPersona());
+    setGenerationSettings(loadGenerationSettings());
   }, []);
 
   useEffect(() => {
@@ -52,9 +56,78 @@ const SettingsPage = () => {
     setTheme(newCustomTheme);
   };
 
+  const handlePersonaChange = (e) => {
+    setPersona(e.target.value);
+  };
+
+  const handlePersonaSubmit = (e) => {
+    e.preventDefault();
+    savePersona(persona);
+    alert('Persona saved successfully!');
+  };
+
+  const handleGenerationSettingsChange = (e) => {
+    const { name, value } = e.target;
+    setGenerationSettings(prev => ({ ...prev, [name]: parseInt(value, 10) }));
+  };
+
+  useEffect(() => {
+    saveGenerationSettings(generationSettings);
+  }, [generationSettings]);
+
   return (
     <div className={styles.page}>
       <h2>Settings</h2>
+
+      <div className={styles.section}>
+        <h3>Generation Settings</h3>
+        <div className={styles.form}>
+          <div className={styles.formGroup}>
+            <label htmlFor="maxTokens">Max Tokens: {generationSettings.maxTokens}</label>
+            <input
+              type="range"
+              id="maxTokens"
+              name="maxTokens"
+              min="100"
+              max="2000"
+              step="100"
+              value={generationSettings.maxTokens}
+              onChange={handleGenerationSettingsChange}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="contextWindowSize">Context Window (characters): {generationSettings.contextWindowSize}</label>
+            <input
+              type="range"
+              id="contextWindowSize"
+              name="contextWindowSize"
+              min="1000"
+              max="128000"
+              step="1000"
+              value={generationSettings.contextWindowSize}
+              onChange={handleGenerationSettingsChange}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.section}>
+        <h3>User Persona</h3>
+        <form onSubmit={handlePersonaSubmit} className={styles.form}>
+          <div className={styles.formGroup}>
+            <label htmlFor="persona">Your Persona</label>
+            <textarea
+              id="persona"
+              name="persona"
+              rows="5"
+              value={persona}
+              onChange={handlePersonaChange}
+              placeholder="Describe yourself to the bot. This will be sent with every message."
+            ></textarea>
+          </div>
+          <button type="submit" className={styles.submitButton}>Save Persona</button>
+        </form>
+      </div>
 
       <div className={styles.section}>
         <h3>Theme Customization</h3>
