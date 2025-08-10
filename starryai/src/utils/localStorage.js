@@ -176,6 +176,21 @@ export const deleteCharacter = (characterId) => {
   }
 };
 
+export const deleteChatSession = (characterId, chatId) => {
+  try {
+    const allHistories = loadAllChatHistories();
+    if (!allHistories[characterId]) {
+      return;
+    }
+    const updatedChats = allHistories[characterId].filter(chat => chat.id !== chatId);
+    allHistories[characterId] = updatedChats;
+    const serializedState = JSON.stringify(allHistories);
+    localStorage.setItem(CHAT_HISTORY_KEY, serializedState);
+  } catch (e) {
+    console.error("Could not delete chat session.", e);
+  }
+};
+
 const PROXY_CONFIGS_KEY = 'janitor_ai_clone_proxy_configs';
 
 export const saveProxyConfigs = (configs) => {

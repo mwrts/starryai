@@ -42,3 +42,17 @@
   font-size: 0.8rem;
   color: #888;
 }
+
+.deleteButton {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #aaa;
+  padding: 0.5rem;
+}
+
+.deleteButton:hover {
+  color: #f00;
+}

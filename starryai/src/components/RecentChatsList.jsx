@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { loadCharacters, loadAllChatHistories } from '../utils/localStorage';
+import { loadCharacters, loadAllChatHistories, deleteChatSession } from '../utils/localStorage';
 import styles from './RecentChatsList.module.css';
 
 const RecentChatsList = () => {
   const [recentChats, setRecentChats] = useState([]);
 
-  useEffect(() => {
+  const loadChats = () => {
     const characters = loadCharacters();
     const allHistories = loadAllChatHistories();
 
@@ -27,9 +27,21 @@ const RecentChatsList = () => {
 
     // Sort by lastUpdated descending
     allChats.sort((a, b) => b.lastUpdated - a.lastUpdated);
-
     setRecentChats(allChats);
+  };
+
+  useEffect(() => {
+    loadChats();
   }, []);
+
+  const handleDelete = (e, characterId, chatId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this chat?')) {
+      deleteChatSession(characterId, chatId);
+      loadChats(); // Refresh the list
+    }
+  };
 
   if (recentChats.length === 0) {
     return <p>No recent chats.</p>;
@@ -44,6 +56,12 @@ const RecentChatsList = () => {
             <h4 className={styles.name}>{chat.characterName}</h4>
             <p className={styles.time}>{new Date(chat.lastUpdated).toLocaleString()}</p>
           </div>
+          <button
+            className={styles.deleteButton}
+            onClick={(e) => handleDelete(e, chat.characterId, chat.id)}
+          >
+            &times;
+          </button>
         </a>
       ))}
     </div>

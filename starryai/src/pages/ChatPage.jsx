@@ -71,6 +71,34 @@ const ChatPage = ({ characterId, chatId }) => {
     setMessages(newMessages);
   };
 
+  const handleRegenerate = async () => {
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.sender !== 'bot') {
+      return;
+    }
+
+    const messagesForApi = messages.slice(0, -1);
+
+    const proxyConfigs = loadProxyConfigs();
+    if (proxyConfigs.length === 0) {
+      alert('No proxy configuration found. Please add one in the settings.');
+      return;
+    }
+    const proxyConfig = proxyConfigs[0];
+
+    setIsTyping(true);
+    try {
+      const botText = await getBotResponse(character, messagesForApi, proxyConfig, persona, generationSettings);
+      const botMessage = { sender: 'bot', text: botText };
+      setMessages([...messagesForApi, botMessage]);
+    // eslint-disable-next-line no-unused-vars
+    } catch (error) {
+      alert('Failed to get a response from the bot. Please check your proxy configuration and API key.');
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
   const handleSkipTurn = async () => {
     const proxyConfigs = loadProxyConfigs();
     if (proxyConfigs.length === 0) {
@@ -95,7 +123,7 @@ const ChatPage = ({ characterId, chatId }) => {
   return (
     <div className={styles.page}>
       <div className={styles.messageList}>
-        <MessageList messages={messages} onRewind={handleRewind} />
+        <MessageList messages={messages} onRewind={handleRewind} onRegenerate={handleRegenerate} />
         {isTyping && <div className={styles.typingIndicator}>Bot is typing...</div>}
       </div>
       <div className={styles.chatInput}>
