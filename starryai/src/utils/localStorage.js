@@ -44,10 +44,46 @@ export const loadPersona = () => {
 
 const CHAT_HISTORY_KEY = 'janitor_ai_clone_chat_history';
 
-export const saveChatHistory = (characterId, messages) => {
+// Loads all chat histories and handles migration from old format.
+const loadAllChatHistories = () => {
+  try {
+    const serializedState = localStorage.getItem(CHAT_HISTORY_KEY);
+    if (serializedState === null) {
+      return {};
+    }
+    const allHistories = JSON.parse(serializedState);
+
+    // Migration logic
+    for (const charId in allHistories) {
+      if (Array.isArray(allHistories[charId])) {
+        // Old format: array of messages
+        allHistories[charId] = [{
+          id: `chat-${Date.now()}`,
+          messages: allHistories[charId],
+          lastUpdated: Date.now()
+        }];
+      }
+    }
+    return allHistories;
+  } catch (e) {
+    console.error("Could not load chat histories.", e);
+    return {};
+  }
+};
+
+export const saveChatHistory = (characterId, chatId, messages) => {
   try {
     const allHistories = loadAllChatHistories();
-    allHistories[characterId] = messages;
+    if (!allHistories[characterId]) {
+      allHistories[characterId] = [];
+    }
+    const chatIndex = allHistories[characterId].findIndex(chat => chat.id === chatId);
+    if (chatIndex !== -1) {
+      allHistories[characterId][chatIndex].messages = messages;
+      allHistories[characterId][chatIndex].lastUpdated = Date.now();
+    } else {
+      allHistories[characterId].push({ id: chatId, messages, lastUpdated: Date.now() });
+    }
     const serializedState = JSON.stringify(allHistories);
     localStorage.setItem(CHAT_HISTORY_KEY, serializedState);
   } catch (e) {
@@ -55,28 +91,51 @@ export const saveChatHistory = (characterId, messages) => {
   }
 };
 
-export const loadChatHistory = (characterId) => {
+export const loadChatHistory = (characterId, chatId) => {
   try {
     const allHistories = loadAllChatHistories();
-    return allHistories[characterId] || [];
+    if (!allHistories[characterId]) {
+      return [];
+    }
+    const chat = allHistories[characterId].find(chat => chat.id === chatId);
+    return chat ? chat.messages : [];
   } catch (e) {
     console.error("Could not load chat history.", e);
     return [];
   }
 };
 
-const loadAllChatHistories = () => {
+export const loadRecentChatForCharacter = (characterId) => {
   try {
-    const serializedState = localStorage.getItem(CHAT_HISTORY_KEY);
-    if (serializedState === null) {
-      return {};
+    const allHistories = loadAllChatHistories();
+    if (!allHistories[characterId] || allHistories[characterId].length === 0) {
+      return null;
     }
-    return JSON.parse(serializedState);
+    // Sort by lastUpdated descending and return the first one
+    const sortedChats = allHistories[characterId].sort((a, b) => b.lastUpdated - a.lastUpdated);
+    return sortedChats[0];
   } catch (e) {
-    console.error("Could not load chat histories.", e);
-    return {};
+    console.error("Could not load recent chat.", e);
+    return null;
   }
-}
+};
+
+export const deleteCharacter = (characterId) => {
+  try {
+    // Delete character
+    const characters = loadCharacters();
+    const updatedCharacters = characters.filter(c => c.id !== characterId);
+    saveCharacters(updatedCharacters);
+
+    // Delete chat histories
+    const allHistories = loadAllChatHistories();
+    delete allHistories[characterId];
+    const serializedState = JSON.stringify(allHistories);
+    localStorage.setItem(CHAT_HISTORY_KEY, serializedState);
+  } catch (e) {
+    console.error("Could not delete character.", e);
+  }
+};
 
 const PROXY_CONFIGS_KEY = 'janitor_ai_clone_proxy_configs';
 

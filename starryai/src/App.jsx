@@ -23,9 +23,11 @@ function App() {
   let pageProps = {};
 
   if (route.startsWith('#/chat/')) {
-    const characterId = route.split('/')[2];
+    const parts = route.split('/');
+    const characterId = parts[2];
+    const chatId = parts[3];
     CurrentPage = ChatPage;
-    pageProps = { characterId };
+    pageProps = { characterId, chatId };
   } else {
     switch (route) {
       case '#/characters':

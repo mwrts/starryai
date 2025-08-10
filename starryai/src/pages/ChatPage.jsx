@@ -5,7 +5,7 @@ import ChatInput from '../components/ChatInput';
 import { loadCharacters, loadProxyConfigs, loadChatHistory, saveChatHistory, loadPersona } from '../utils/localStorage';
 import { getBotResponse } from '../utils/api';
 
-const ChatPage = ({ characterId }) => {
+const ChatPage = ({ characterId, chatId }) => {
   const [character, setCharacter] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -17,7 +17,7 @@ const ChatPage = ({ characterId }) => {
     const foundCharacter = characters.find(c => c.id.toString() === characterId);
     if (foundCharacter) {
       setCharacter(foundCharacter);
-      const history = loadChatHistory(characterId);
+      const history = loadChatHistory(characterId, chatId);
       if (history.length > 0) {
         setMessages(history);
       } else {
@@ -27,13 +27,13 @@ const ChatPage = ({ characterId }) => {
         setMessages([firstMessage]);
       }
     }
-  }, [characterId]);
+  }, [characterId, chatId]);
 
   useEffect(() => {
-    if (character) {
-      saveChatHistory(character.id, messages);
+    if (character && chatId) {
+      saveChatHistory(character.id, chatId, messages);
     }
-  }, [messages, character]);
+  }, [messages, character, chatId]);
 
   const handleSend = async (text) => {
     const newMessage = { sender: 'user', text };
