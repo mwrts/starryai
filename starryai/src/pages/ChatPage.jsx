@@ -19,7 +19,10 @@ const ChatPage = ({ characterId }) => {
       if (history.length > 0) {
         setMessages(history);
       } else {
-        setMessages([{ sender: 'bot', text: `You are now chatting with ${foundCharacter.name}.` }]);
+        const firstMessage = foundCharacter.firstMessage
+          ? { sender: 'bot', text: foundCharacter.firstMessage }
+          : { sender: 'bot', text: `You are now chatting with ${foundCharacter.name}.` };
+        setMessages([firstMessage]);
       }
     }
   }, [characterId]);
