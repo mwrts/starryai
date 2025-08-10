@@ -47,6 +47,7 @@ const ChatPage = ({ characterId }) => {
       const botText = await getBotResponse(character, newMessages, text, proxyConfig);
       const botMessage = { sender: 'bot', text: botText };
       setMessages([...newMessages, botMessage]);
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
       alert('Failed to get a response from the bot. Please check your proxy configuration and API key.');
     } finally {
@@ -64,12 +65,6 @@ const ChatPage = ({ characterId }) => {
   };
 
   const handleSkipTurn = async () => {
-    const lastMessage = messages[messages.length - 1];
-    let messagesForApi = [...messages];
-    if (lastMessage.sender === 'bot') {
-      messagesForApi = messages.slice(0, -1);
-    }
-
     const proxyConfigs = loadProxyConfigs();
     if (proxyConfigs.length === 0) {
       alert('No proxy configuration found. Please add one in the settings.');
@@ -79,9 +74,10 @@ const ChatPage = ({ characterId }) => {
 
     setIsTyping(true);
     try {
-      const botText = await getBotResponse(character, messagesForApi, "", proxyConfig);
+      const botText = await getBotResponse(character, messages, "", proxyConfig);
       const botMessage = { sender: 'bot', text: botText };
-      setMessages([...messagesForApi, botMessage]);
+      setMessages([...messages, botMessage]);
+    // eslint-disable-next-line no-unused-vars
     } catch (error) {
       alert('Failed to get a response from the bot. Please check your proxy configuration and API key.');
     } finally {
