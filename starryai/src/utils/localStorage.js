@@ -83,11 +83,12 @@ const loadAllChatHistories = () => {
 
     // Migration logic
     for (const charId in allHistories) {
-      if (Array.isArray(allHistories[charId])) {
-        // Old format: array of messages
+      const history = allHistories[charId];
+      if (Array.isArray(history) && history.length > 0 && history[0].sender) {
+        // Old format: array of message objects
         allHistories[charId] = [{
           id: `chat-${Date.now()}`,
-          messages: allHistories[charId],
+          messages: history,
           lastUpdated: Date.now()
         }];
       }

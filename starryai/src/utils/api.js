@@ -31,7 +31,7 @@ export const getBotResponse = async (character, history, newMessage, proxyConfig
 
   const messages = [systemMessage, ...contextMessages];
 
-  if (newMessage) {
+  if (newMessage && newMessage.length > 0) {
     messages.push({ role: 'user', content: newMessage });
   }
 
