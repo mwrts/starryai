@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './ChatPage.module.css';
 import MessageList from '../components/MessageList';
 import ChatInput from '../components/ChatInput';
+import ChatHeader from '../components/ChatHeader';
 import { loadCharacters, loadProxyConfigs, loadChatHistory, saveChatHistory, loadPersona, loadGenerationSettings } from '../utils/localStorage';
 import { getBotResponse } from '../utils/api';
 
@@ -122,6 +123,7 @@ const ChatPage = ({ characterId, chatId }) => {
 
   return (
     <div className={styles.page}>
+      <ChatHeader character={character} />
       <div className={styles.messageList}>
         <MessageList messages={messages} onRewind={handleRewind} onRegenerate={handleRegenerate} />
         {isTyping && <div className={styles.typingIndicator}>Bot is typing...</div>}

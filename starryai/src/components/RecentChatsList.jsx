@@ -47,11 +47,12 @@ const RecentChatsList = () => {
     return <p>No recent chats.</p>;
   }
 
+  const placeholderImage = 'https://via.placeholder.com/150';
   return (
     <div className={styles.list}>
       {recentChats.map(chat => (
         <a key={chat.id} href={`/#/chat/${chat.characterId}/${chat.id}`} className={styles.chatItem}>
-          <img src={chat.characterImage} alt={chat.characterName} className={styles.image} />
+          <img src={chat.characterImage || placeholderImage} alt={chat.characterName} className={styles.image} />
           <div className={styles.info}>
             <h4 className={styles.name}>{chat.characterName}</h4>
             <p className={styles.time}>{new Date(chat.lastUpdated).toLocaleString()}</p>
