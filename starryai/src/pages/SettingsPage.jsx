@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styles from './SettingsPage.module.css';
-import { loadProxyConfigs, saveProxyConfigs } from '../utils/localStorage';
+import { loadProxyConfigs, saveProxyConfigs, loadBackgroundSettings, saveBackgroundSettings } from '../utils/localStorage';
 import { ThemeContext, themes } from '../contexts/ThemeContext';
 
 const SettingsPage = () => {
@@ -11,6 +11,7 @@ const SettingsPage = () => {
 
   const { theme, setTheme } = useContext(ThemeContext);
   const [customTheme, setCustomTheme] = useState(theme);
+  const [backgroundSettings, setBackgroundSettings] = useState(loadBackgroundSettings());
 
   useEffect(() => {
     setConfigs(loadProxyConfigs());
@@ -19,6 +20,10 @@ const SettingsPage = () => {
   useEffect(() => {
     setCustomTheme(theme);
   }, [theme]);
+
+  useEffect(() => {
+    saveBackgroundSettings(backgroundSettings);
+  }, [backgroundSettings]);
 
   const handleProxySubmit = (e) => {
     e.preventDefault();
@@ -52,6 +57,22 @@ const SettingsPage = () => {
     setTheme(newCustomTheme);
   };
 
+  const handleBackgroundImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBackgroundSettings(prev => ({ ...prev, image: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleBackgroundSettingChange = (e) => {
+    const { name, value } = e.target;
+    setBackgroundSettings(prev => ({ ...prev, [name]: parseFloat(value) }));
+  };
+
   return (
     <div className={styles.page}>
       <h2>Settings</h2>
@@ -80,6 +101,22 @@ const SettingsPage = () => {
             <label>Accent Color</label>
             <input type="color" name="--accent-color" value={customTheme['--accent-color']} onChange={handleCustomThemeChange} />
           </div>
+        </div>
+      </div>
+
+      <div className={styles.section}>
+        <h3>Background Settings</h3>
+        <div className={styles.formGroup}>
+          <label>Background Image</label>
+          <input type="file" accept="image/*" onChange={handleBackgroundImageChange} />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Blur: {backgroundSettings.blur}px</label>
+          <input type="range" name="blur" min="0" max="20" step="1" value={backgroundSettings.blur} onChange={handleBackgroundSettingChange} />
+        </div>
+        <div className={styles.formGroup}>
+          <label>Opacity: {backgroundSettings.opacity}</label>
+          <input type="range" name="opacity" min="0" max="1" step="0.1" value={backgroundSettings.opacity} onChange={handleBackgroundSettingChange} />
         </div>
       </div>
 

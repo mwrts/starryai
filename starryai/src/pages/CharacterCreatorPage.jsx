@@ -5,6 +5,7 @@ import { loadCharacters, saveCharacters } from '../utils/localStorage';
 const CharacterCreatorPage = () => {
   const [name, setName] = useState('');
   const [lore, setLore] = useState('');
+  const [firstMessage, setFirstMessage] = useState('');
   const [image, setImage] = useState(null);
 
   const handleImageChange = (e) => {
@@ -30,6 +31,7 @@ const CharacterCreatorPage = () => {
       name,
       lore,
       image,
+      firstMessage,
     };
 
     const characters = loadCharacters();
@@ -38,6 +40,7 @@ const CharacterCreatorPage = () => {
     // Clear form
     setName('');
     setLore('');
+    setFirstMessage('');
     setImage(null);
     e.target.reset();
 
@@ -66,6 +69,16 @@ const CharacterCreatorPage = () => {
             rows="10"
             value={lore}
             onChange={(e) => setLore(e.target.value)}
+          ></textarea>
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="firstMessage">First Message</label>
+          <textarea
+            id="firstMessage"
+            name="firstMessage"
+            rows="5"
+            value={firstMessage}
+            onChange={(e) => setFirstMessage(e.target.value)}
           ></textarea>
         </div>
         <div className={styles.formGroup}>

@@ -1,7 +1,24 @@
 .layout {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  isolation: isolate;
+}
+
+.layout::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: var(--background-image);
+  background-size: cover;
+  background-position: center;
+  filter: blur(var(--background-blur));
+  opacity: var(--background-opacity);
+  z-index: -1;
 }
 
 .main {
