@@ -17,8 +17,11 @@ export const getBotResponse = async (character, history, newMessage, proxyConfig
       role: msg.sender === 'user' ? 'user' : 'assistant',
       content: msg.text,
     })),
-    { role: 'user', content: newMessage },
   ];
+
+  if (newMessage) {
+    messages.push({ role: 'user', content: newMessage });
+  }
 
   try {
     const response = await fetch(proxyUrl, {
