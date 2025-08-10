@@ -30,26 +30,8 @@
 }
 
 .formGroup input {
-  padding: 0.75rem;
-  border-radius: 4px;
-  border: 1px solid var(--border-color);
-  background-color: var(--main-bg-color);
-  color: var(--text-color);
-  font-size: 1rem;
-}
-
-.submitButton {
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  background-color: var(--accent-color);
-  color: var(--text-color);
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.submitButton:hover {
-  opacity: 0.8;
+  /* Most styles are now global */
+  background-color: var(--main-bg-color); /* Keep this override */
 }
 
 .configsList ul {
@@ -70,13 +52,8 @@
 }
 
 .deleteButton {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  border: none;
+  /* Let global button styles apply, just override color */
   background-color: #dc3545;
-  color: white;
-  font-size: 0.9rem;
-  cursor: pointer;
 }
 
 .deleteButton:hover {
@@ -105,12 +82,9 @@
 }
 
 .themeSelector button {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  border: 1px solid var(--border-color);
+  /* Let global button styles apply, just override background */
   background-color: var(--main-bg-color);
-  color: var(--text-color);
-  cursor: pointer;
+  border: 1px solid var(--border-color);
 }
 
 .themeEditor {
