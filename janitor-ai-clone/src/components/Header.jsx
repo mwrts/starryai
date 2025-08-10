@@ -5,7 +5,7 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
-        <a href="/#/">Janitor AI Clone</a>
+        <a href="/#/">StarryAI</a>
       </div>
       <nav className={styles.nav}>
         <a href="/#/">Home</a>
