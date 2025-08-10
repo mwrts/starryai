@@ -22,6 +22,25 @@ export const loadCharacters = () => {
   }
 };
 
+const ACTIVE_PROXY_ID_KEY = 'janitor_ai_clone_active_proxy_id';
+
+export const saveActiveProxyId = (id) => {
+  try {
+    localStorage.setItem(ACTIVE_PROXY_ID_KEY, id);
+  } catch (e) {
+    console.error("Could not save active proxy id.", e);
+  }
+};
+
+export const loadActiveProxyId = () => {
+  try {
+    return localStorage.getItem(ACTIVE_PROXY_ID_KEY);
+  } catch (e) {
+    console.error("Could not load active proxy id.", e);
+    return null;
+  }
+};
+
 const GENERATION_SETTINGS_KEY = 'janitor_ai_clone_generation_settings';
 const DEFAULT_GENERATION_SETTINGS = {
   maxTokens: 500,

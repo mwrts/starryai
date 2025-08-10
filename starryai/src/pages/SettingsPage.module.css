@@ -51,6 +51,28 @@
   border-bottom: none;
 }
 
+.activeItem {
+  background-color: rgba(0, 123, 255, 0.1);
+  border-left: 3px solid var(--accent-color);
+}
+
+.configDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.configActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.activeLabel {
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
 .deleteButton {
   /* Let global button styles apply, just override color */
   background-color: #dc3545;

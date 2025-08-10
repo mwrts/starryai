@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styles from './SettingsPage.module.css';
-import { loadProxyConfigs, saveProxyConfigs, loadPersona, savePersona, loadGenerationSettings, saveGenerationSettings } from '../utils/localStorage';
+import { loadProxyConfigs, saveProxyConfigs, loadPersona, savePersona, loadGenerationSettings, saveGenerationSettings, saveActiveProxyId, loadActiveProxyId } from '../utils/localStorage';
 import { ThemeContext, themes } from '../contexts/ThemeContext';
 
 const SettingsPage = () => {
@@ -10,6 +10,7 @@ const SettingsPage = () => {
   const [modelName, setModelName] = useState('');
   const [persona, setPersona] = useState('');
   const [generationSettings, setGenerationSettings] = useState(loadGenerationSettings());
+  const [activeProxyId, setActiveProxyId] = useState(loadActiveProxyId());
 
   const { theme, setTheme } = useContext(ThemeContext);
   const [customTheme, setCustomTheme] = useState(theme);
@@ -18,6 +19,7 @@ const SettingsPage = () => {
     setConfigs(loadProxyConfigs());
     setPersona(loadPersona());
     setGenerationSettings(loadGenerationSettings());
+    setActiveProxyId(loadActiveProxyId());
   }, []);
 
   useEffect(() => {
@@ -43,6 +45,15 @@ const SettingsPage = () => {
     const updatedConfigs = configs.filter(config => config.id !== id);
     setConfigs(updatedConfigs);
     saveProxyConfigs(updatedConfigs);
+    if (activeProxyId === id) {
+      saveActiveProxyId(null);
+      setActiveProxyId(null);
+    }
+  };
+
+  const handleSetActiveProxy = (id) => {
+    saveActiveProxyId(id);
+    setActiveProxyId(id);
   };
 
   const handleThemeChange = (newTheme) => {
@@ -163,10 +174,19 @@ const SettingsPage = () => {
           {configs.length === 0 ? <p>No proxy configurations saved.</p> : (
             <ul>
               {configs.map(config => (
-                <li key={config.id}>
-                  <span>URL: {config.proxyUrl}</span>
-                  <span>Model: {config.modelName || 'Not set'}</span>
-                  <button onClick={() => handleDeleteProxy(config.id)} className={styles.deleteButton}>Delete</button>
+                <li key={config.id} className={activeProxyId === config.id ? styles.activeItem : ''}>
+                  <div className={styles.configDetails}>
+                    <span>URL: {config.proxyUrl}</span>
+                    <span>Model: {config.modelName || 'Not set'}</span>
+                  </div>
+                  <div className={styles.configActions}>
+                    {activeProxyId === config.id ? (
+                      <span className={styles.activeLabel}>Active</span>
+                    ) : (
+                      <button onClick={() => handleSetActiveProxy(config.id)}>Set Active</button>
+                    )}
+                    <button onClick={() => handleDeleteProxy(config.id)} className={styles.deleteButton}>Delete</button>
+                  </div>
                 </li>
               ))}
             </ul>

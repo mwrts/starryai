@@ -3,8 +3,23 @@ import styles from './ChatPage.module.css';
 import MessageList from '../components/MessageList';
 import ChatInput from '../components/ChatInput';
 import ChatHeader from '../components/ChatHeader';
-import { loadCharacters, loadProxyConfigs, loadChatHistory, saveChatHistory, loadPersona, loadGenerationSettings } from '../utils/localStorage';
+import { loadCharacters, loadProxyConfigs, loadChatHistory, saveChatHistory, loadPersona, loadGenerationSettings, loadActiveProxyId } from '../utils/localStorage';
 import { getBotResponse } from '../utils/api';
+
+const getActiveProxy = () => {
+  const proxyConfigs = loadProxyConfigs();
+  if (proxyConfigs.length === 0) {
+    return null;
+  }
+  const activeId = loadActiveProxyId();
+  if (activeId) {
+    const activeConfig = proxyConfigs.find(c => c.id.toString() === activeId);
+    if (activeConfig) {
+      return activeConfig;
+    }
+  }
+  return proxyConfigs[0];
+};
 
 const ChatPage = ({ characterId, chatId }) => {
   const [character, setCharacter] = useState(null);
@@ -43,12 +58,11 @@ const ChatPage = ({ characterId, chatId }) => {
     const newMessages = [...messages, newMessage];
     setMessages(newMessages);
 
-    const proxyConfigs = loadProxyConfigs();
-    if (proxyConfigs.length === 0) {
+    const proxyConfig = getActiveProxy();
+    if (!proxyConfig) {
       alert('No proxy configuration found. Please add one in the settings.');
       return;
     }
-    const proxyConfig = proxyConfigs[0]; // Use the first config for now
 
     setIsTyping(true);
     try {
@@ -80,12 +94,11 @@ const ChatPage = ({ characterId, chatId }) => {
 
     const messagesForApi = messages.slice(0, -1);
 
-    const proxyConfigs = loadProxyConfigs();
-    if (proxyConfigs.length === 0) {
+    const proxyConfig = getActiveProxy();
+    if (!proxyConfig) {
       alert('No proxy configuration found. Please add one in the settings.');
       return;
     }
-    const proxyConfig = proxyConfigs[0];
 
     setIsTyping(true);
     try {
@@ -101,12 +114,11 @@ const ChatPage = ({ characterId, chatId }) => {
   };
 
   const handleSkipTurn = async () => {
-    const proxyConfigs = loadProxyConfigs();
-    if (proxyConfigs.length === 0) {
+    const proxyConfig = getActiveProxy();
+    if (!proxyConfig) {
       alert('No proxy configuration found. Please add one in the settings.');
       return;
     }
-    const proxyConfig = proxyConfigs[0];
 
     // Create a temporary messages array for the API call with a neutral prompt
     const messagesForApi = [...messages, { sender: 'user', text: '...' }];
