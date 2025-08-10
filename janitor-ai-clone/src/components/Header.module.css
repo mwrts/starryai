@@ -1,0 +1,40 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: var(--secondary-bg-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.logo a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.nav a {
+  color: var(--text-color);
+  text-decoration: none;
+  margin-left: 1.5rem;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .nav {
+    margin-top: 1rem;
+  }
+
+  .nav a {
+    margin: 0 0.5rem;
+  }
+}
