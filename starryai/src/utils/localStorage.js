@@ -22,31 +22,20 @@ export const loadCharacters = () => {
   }
 };
 
-const BACKGROUND_SETTINGS_KEY = 'janitor_ai_clone_background_settings';
+const CHAT_HISTORY_KEY = 'janitor_ai_clone_chat_history';
 
-export const saveBackgroundSettings = (settings) => {
+const loadAllChatHistories = () => {
   try {
-    const serializedState = JSON.stringify(settings);
-    localStorage.setItem(BACKGROUND_SETTINGS_KEY, serializedState);
-  } catch (e) {
-    console.error("Could not save background settings.", e);
-  }
-};
-
-export const loadBackgroundSettings = () => {
-  try {
-    const serializedState = localStorage.getItem(BACKGROUND_SETTINGS_KEY);
+    const serializedState = localStorage.getItem(CHAT_HISTORY_KEY);
     if (serializedState === null) {
-      return { image: null, blur: 0, opacity: 1 };
+      return {};
     }
     return JSON.parse(serializedState);
   } catch (e) {
-    console.error("Could not load background settings.", e);
-    return { image: null, blur: 0, opacity: 1 };
+    console.error("Could not load chat histories.", e);
+    return {};
   }
-};
-
-const CHAT_HISTORY_KEY = 'janitor_ai_clone_chat_history';
+}
 
 export const saveChatHistory = (characterId, messages) => {
   try {
@@ -69,19 +58,6 @@ export const loadChatHistory = (characterId) => {
   }
 };
 
-const loadAllChatHistories = () => {
-  try {
-    const serializedState = localStorage.getItem(CHAT_HISTORY_KEY);
-    if (serializedState === null) {
-      return {};
-    }
-    return JSON.parse(serializedState);
-  } catch (e) {
-    console.error("Could not load chat histories.", e);
-    return {};
-  }
-}
-
 const PROXY_CONFIGS_KEY = 'janitor_ai_clone_proxy_configs';
 
 export const saveProxyConfigs = (configs) => {
@@ -103,5 +79,29 @@ export const loadProxyConfigs = () => {
   } catch (e) {
     console.error("Could not load proxy configs.", e);
     return [];
+  }
+};
+
+const BACKGROUND_SETTINGS_KEY = 'janitor_ai_clone_background_settings';
+
+export const saveBackgroundSettings = (settings) => {
+  try {
+    const serializedState = JSON.stringify(settings);
+    localStorage.setItem(BACKGROUND_SETTINGS_KEY, serializedState);
+  } catch (e) {
+    console.error("Could not save background settings.", e);
+  }
+};
+
+export const loadBackgroundSettings = () => {
+  try {
+    const serializedState = localStorage.getItem(BACKGROUND_SETTINGS_KEY);
+    if (serializedState === null) {
+      return { image: null, blur: 0, opacity: 1 };
+    }
+    return JSON.parse(serializedState);
+  } catch (e) {
+    console.error("Could not load background settings.", e);
+    return { image: null, blur: 0, opacity: 1 };
   }
 };
