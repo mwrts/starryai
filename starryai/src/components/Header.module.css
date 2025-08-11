@@ -5,6 +5,8 @@
   padding: 1rem 2rem;
   background-color: var(--secondary-bg-color);
   border-bottom: 1px solid var(--border-color);
+  position: relative; /* Needed for z-index stacking */
+  z-index: 1;
 }
 
 .logo a {
