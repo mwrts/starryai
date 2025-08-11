@@ -3,24 +3,8 @@ import styles from './ChatPage.module.css';
 import MessageList from '../components/MessageList';
 import ChatInput from '../components/ChatInput';
 import ChatHeader from '../components/ChatHeader';
-import { loadCharacters, loadProxyConfigs, loadChatHistory, saveChatHistory, loadPersona, loadGenerationSettings, loadActiveProxyId } from '../utils/localStorage';
+import { loadCharacters, loadChatHistory, saveChatHistory, loadPersona, loadGenerationSettings, getActiveProxy } from '../utils/localStorage';
 import { getBotResponse } from '../utils/api';
-
-const getActiveProxy = () => {
-  const proxyConfigs = loadProxyConfigs();
-  if (proxyConfigs.length === 0) {
-    return null;
-  }
-  const activeId = loadActiveProxyId();
-  if (activeId) {
-    const activeConfig = proxyConfigs.find(c => c.id.toString() === activeId);
-    // If activeId is saved but config not found (e.g. deleted), return null
-    // to force user to select a new one.
-    return activeConfig || null;
-  }
-  // Fallback to the first config if no active one is explicitly set.
-  return proxyConfigs[0];
-};
 
 const ChatPage = ({ characterId, chatId }) => {
   const [character, setCharacter] = useState(null);

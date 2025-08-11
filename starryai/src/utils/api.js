@@ -3,6 +3,9 @@ export const getBotResponse = async (character, history, proxyConfig, persona, g
   const { maxTokens, contextWindowSize } = generationSettings;
 
   let systemContent = `You are ${character.name}. ${character.lore}`;
+  if (character.scenario) {
+    systemContent += `\n\nScenario: ${character.scenario}`;
+  }
   if (persona) {
     systemContent += `\n\nThe user you are talking to has the following persona: ${persona}`;
   }

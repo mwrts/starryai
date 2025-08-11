@@ -22,6 +22,22 @@ export const loadCharacters = () => {
   }
 };
 
+export const getActiveProxy = () => {
+  const proxyConfigs = loadProxyConfigs();
+  if (proxyConfigs.length === 0) {
+    return null;
+  }
+  const activeId = loadActiveProxyId();
+  if (activeId) {
+    const activeConfig = proxyConfigs.find(c => c.id.toString() === activeId);
+    // If activeId is saved but config not found (e.g. deleted), return null
+    // to force user to select a new one.
+    return activeConfig || null;
+  }
+  // Fallback to the first config if no active one is explicitly set.
+  return proxyConfigs[0];
+};
+
 const ACTIVE_PROXY_ID_KEY = 'janitor_ai_clone_active_proxy_id';
 
 export const saveActiveProxyId = (id) => {

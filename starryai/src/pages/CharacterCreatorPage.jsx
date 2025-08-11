@@ -5,6 +5,7 @@ import { loadCharacters, saveCharacters } from '../utils/localStorage';
 const CharacterCreatorPage = ({ characterId }) => {
   const [name, setName] = useState('');
   const [lore, setLore] = useState('');
+  const [scenario, setScenario] = useState('');
   const [firstMessage, setFirstMessage] = useState('');
   const [image, setImage] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -18,6 +19,7 @@ const CharacterCreatorPage = ({ characterId }) => {
       if (characterToEdit) {
         setName(characterToEdit.name);
         setLore(characterToEdit.lore);
+        setScenario(characterToEdit.scenario || '');
         setFirstMessage(characterToEdit.firstMessage || '');
         setImage(characterToEdit.image || null);
       }
@@ -56,6 +58,7 @@ const CharacterCreatorPage = ({ characterId }) => {
               id: Date.now() + importedCount,
               name: char.name,
               lore: char.lore,
+              scenario: char.scenario || '',
               firstMessage: char.firstMessage || '',
               image: char.image || null,
             });
@@ -93,7 +96,7 @@ const CharacterCreatorPage = ({ characterId }) => {
     if (isEditMode) {
       const updatedCharacters = characters.map(c => {
         if (c.id.toString() === characterId) {
-          return { ...c, name, lore, image, firstMessage };
+          return { ...c, name, lore, scenario, image, firstMessage };
         }
         return c;
       });
@@ -105,6 +108,7 @@ const CharacterCreatorPage = ({ characterId }) => {
         id: Date.now(),
         name,
         lore,
+        scenario,
         image,
         firstMessage,
       };
@@ -113,6 +117,7 @@ const CharacterCreatorPage = ({ characterId }) => {
       // Clear form
       setName('');
       setLore('');
+      setScenario('');
       setFirstMessage('');
       setImage(null);
       e.target.reset();
@@ -154,6 +159,16 @@ const CharacterCreatorPage = ({ characterId }) => {
             rows="10"
             value={lore}
             onChange={(e) => setLore(e.target.value)}
+          ></textarea>
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="scenario">Scenario</label>
+          <textarea
+            id="scenario"
+            name="scenario"
+            rows="3"
+            value={scenario}
+            onChange={(e) => setScenario(e.target.value)}
           ></textarea>
         </div>
         <div className={styles.formGroup}>
