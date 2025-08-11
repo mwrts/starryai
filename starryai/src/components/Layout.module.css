@@ -1,17 +1,17 @@
 .layout {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Use 100% to fill parent (#root) */
-  overflow: hidden;
-  position: relative; /* Create stacking context for stars */
+  min-height: 100vh;
+  background-color: var(--main-bg-color);
+  position: relative; /* Stacking context for stars */
 }
 
 .main {
   flex-grow: 1;
-  padding: 1rem;
-  overflow-y: auto;
-  position: relative; /* Needed for z-index stacking */
-  z-index: 1;
+  display: flex; /* Make main a flex container too */
+  flex-direction: column;
+  position: relative;
+  z-index: 1; /* Content above stars */
 }
 
 @keyframes twinkle {
@@ -21,7 +21,7 @@
 }
 
 .starsActive {
-  background-color: #0c0a1f; /* A deep, dark blue for the night sky */
+  background-color: #0c0a1f;
   overflow: hidden;
 }
 

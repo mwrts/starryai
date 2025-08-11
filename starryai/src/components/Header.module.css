@@ -5,8 +5,9 @@
   padding: 1rem 2rem;
   background-color: var(--secondary-bg-color);
   border-bottom: 1px solid var(--border-color);
-  position: relative; /* Needed for z-index stacking */
-  z-index: 1;
+  position: relative;
+  z-index: 2; /* Header above main content */
+  flex-shrink: 0;
 }
 
 .logo a {
