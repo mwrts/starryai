@@ -1,0 +1,123 @@
+.page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.form, .configsList {
+  background-color: var(--secondary-bg-color);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.form h3, .configsList h3 {
+  margin-top: 0;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.toggleLabel {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.formGroup input {
+  /* Most styles are now global */
+  background-color: var(--main-bg-color); /* Keep this override */
+}
+
+.configsList ul {
+  list-style: none;
+  padding: 0;
+}
+
+.configsList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.configsList li:last-child {
+  border-bottom: none;
+}
+
+.activeItem {
+  background-color: rgba(0, 123, 255, 0.1);
+  border-left: 3px solid var(--accent-color);
+}
+
+.configDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.configActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.activeLabel {
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
+.deleteButton {
+  /* Let global button styles apply, just override color */
+  background-color: #dc3545;
+}
+
+.deleteButton:hover {
+  background-color: #c82333;
+}
+
+.section {
+  background-color: var(--secondary-bg-color);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+}
+
+.section h3 {
+  margin-top: 0;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.themeSelector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.themeSelector button {
+  /* Let global button styles apply, just override background */
+  background-color: var(--secondary-bg-color);
+  border: 1px solid var(--border-color);
+}
+
+.themeEditor {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
