@@ -1,0 +1,39 @@
+:root {
+  --main-bg-color: #282c34;
+  --text-color: white;
+  --accent-color: #007bff;
+  --secondary-bg-color: #1a1a1a;
+  --border-color: #444;
+
+  --font-logo: 'Borel', cursive;
+  --font-dialogue: 'Merriweather Sans', sans-serif;
+  --font-input: 'Nunito', sans-serif;
+  --font-headings: 'Libre Baskerville', serif;
+  --font-timestamps: 'Overpass Mono', monospace;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-dialogue);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--main-bg-color);
+  color: var(--text-color);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+hr {
+  border-color: var(--border-color);
+}
+
+h2, h3, h4, h5, h6 {
+  font-family: var(--font-headings);
+}
+
+input, textarea, button {
+  font-family: var(--font-input);
+}
