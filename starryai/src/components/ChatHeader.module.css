@@ -26,6 +26,13 @@
   font-size: 1.2rem;
 }
 
+.modelName {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #888;
+  font-style: italic;
+}
+
 .actions {
   display: flex;
 }

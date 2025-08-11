@@ -3,22 +3,29 @@ import React, { useState } from 'react';
 const ChatInput = ({ onSend, onSkip }) => {
   const [text, setText] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     if (text.trim()) {
       onSend(text);
       setText('');
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', width: '100%' }}>
-      <input
-        type="text"
+    <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+      <textarea
         placeholder="Type a message..."
         value={text}
         onChange={(e) => setText(e.target.value)}
-        style={{ flexGrow: 1, marginRight: '1rem' }}
+        onKeyDown={handleKeyDown}
+        rows="1"
+        style={{ flexGrow: 1, marginRight: '1rem', resize: 'none' }}
       />
       <button type="submit">Send</button>
       <button type="button" onClick={onSkip} style={{ marginLeft: '0.5rem' }}>

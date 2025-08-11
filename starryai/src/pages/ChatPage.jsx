@@ -138,9 +138,11 @@ const ChatPage = ({ characterId, chatId }) => {
     }
   };
 
+  const activeProxy = getActiveProxy();
+
   return (
     <div className={styles.page}>
-      <ChatHeader character={character} />
+      <ChatHeader character={character} modelName={activeProxy?.modelName} />
       <div className={styles.messageList}>
         <MessageList messages={messages} onRewind={handleRewind} onRegenerate={handleRegenerate} />
         {isTyping && <div className={styles.typingIndicator}>Bot is typing...</div>}
