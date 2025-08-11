@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styles from './ChatPage.module.css';
 import MessageList from '../components/MessageList';
 import ChatInput from '../components/ChatInput';
 import ChatHeader from '../components/ChatHeader';
-import { loadCharacters, loadChatHistory, saveChatHistory, loadPersona, loadGenerationSettings, getActiveProxy } from '../utils/localStorage';
+import { loadCharacters, loadChatHistory, saveChatHistory, loadPersona, loadGenerationSettings } from '../utils/localStorage';
 import { getBotResponse } from '../utils/api';
+import { ProxyContext } from '../contexts/ProxyContext';
 
 const ChatPage = ({ characterId, chatId }) => {
   const [character, setCharacter] = useState(null);
@@ -12,6 +13,7 @@ const ChatPage = ({ characterId, chatId }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [persona, setPersona] = useState('');
   const [generationSettings, setGenerationSettings] = useState(loadGenerationSettings());
+  const { activeProxy } = useContext(ProxyContext);
 
   useEffect(() => {
     setPersona(loadPersona());
@@ -43,15 +45,14 @@ const ChatPage = ({ characterId, chatId }) => {
     const newMessages = [...messages, newMessage];
     setMessages(newMessages);
 
-    const proxyConfig = getActiveProxy();
-    if (!proxyConfig) {
-      alert('No proxy configuration found. Please add one in the settings.');
+    if (!activeProxy) {
+      alert('No active proxy configuration found. Please set one in the settings.');
       return;
     }
 
     setIsTyping(true);
     try {
-      const botText = await getBotResponse(character, newMessages, proxyConfig, persona, generationSettings);
+      const botText = await getBotResponse(character, newMessages, activeProxy, persona, generationSettings);
       const botMessage = { sender: 'bot', text: botText };
       setMessages([...newMessages, botMessage]);
     // eslint-disable-next-line no-unused-vars
@@ -79,15 +80,14 @@ const ChatPage = ({ characterId, chatId }) => {
 
     const messagesForApi = messages.slice(0, -1);
 
-    const proxyConfig = getActiveProxy();
-    if (!proxyConfig) {
-      alert('No proxy configuration found. Please add one in the settings.');
+    if (!activeProxy) {
+      alert('No active proxy configuration found. Please set one in the settings.');
       return;
     }
 
     setIsTyping(true);
     try {
-      const botText = await getBotResponse(character, messagesForApi, proxyConfig, persona, generationSettings);
+      const botText = await getBotResponse(character, messagesForApi, activeProxy, persona, generationSettings);
       const botMessage = { sender: 'bot', text: botText };
       setMessages([...messagesForApi, botMessage]);
     // eslint-disable-next-line no-unused-vars
@@ -99,9 +99,8 @@ const ChatPage = ({ characterId, chatId }) => {
   };
 
   const handleSkipTurn = async () => {
-    const proxyConfig = getActiveProxy();
-    if (!proxyConfig) {
-      alert('No proxy configuration found. Please add one in the settings.');
+    if (!activeProxy) {
+      alert('No active proxy configuration found. Please set one in the settings.');
       return;
     }
 
@@ -110,7 +109,7 @@ const ChatPage = ({ characterId, chatId }) => {
 
     setIsTyping(true);
     try {
-      const botText = await getBotResponse(character, messagesForApi, proxyConfig, persona, generationSettings);
+      const botText = await getBotResponse(character, messagesForApi, activeProxy, persona, generationSettings);
       const botMessage = { sender: 'bot', text: botText };
       // Add the new bot message to the original message history
       setMessages([...messages, botMessage]);
@@ -121,8 +120,6 @@ const ChatPage = ({ characterId, chatId }) => {
       setIsTyping(false);
     }
   };
-
-  const activeProxy = getActiveProxy();
 
   return (
     <div className={styles.page}>

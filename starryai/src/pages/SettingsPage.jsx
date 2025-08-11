@@ -1,25 +1,23 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styles from './SettingsPage.module.css';
-import { loadProxyConfigs, saveProxyConfigs, loadPersona, savePersona, loadGenerationSettings, saveGenerationSettings, saveActiveProxyId, loadActiveProxyId } from '../utils/localStorage';
+import { saveProxyConfigs, loadPersona, savePersona, loadGenerationSettings, saveGenerationSettings } from '../utils/localStorage';
 import { ThemeContext, themes } from '../contexts/ThemeContext';
+import { ProxyContext } from '../contexts/ProxyContext';
 
 const SettingsPage = () => {
-  const [configs, setConfigs] = useState([]);
+  const { proxyConfigs, activeProxyId, setActiveProxyId, refreshProxyConfigs } = useContext(ProxyContext);
   const [apiKey, setApiKey] = useState('');
   const [proxyUrl, setProxyUrl] = useState('');
   const [modelName, setModelName] = useState('');
   const [persona, setPersona] = useState('');
   const [generationSettings, setGenerationSettings] = useState(loadGenerationSettings());
-  const [activeProxyId, setActiveProxyId] = useState(loadActiveProxyId());
 
   const { theme, setTheme } = useContext(ThemeContext);
   const [customTheme, setCustomTheme] = useState(theme);
 
   useEffect(() => {
-    setConfigs(loadProxyConfigs());
     setPersona(loadPersona());
     setGenerationSettings(loadGenerationSettings());
-    setActiveProxyId(loadActiveProxyId());
   }, []);
 
   useEffect(() => {
@@ -33,27 +31,21 @@ const SettingsPage = () => {
       return;
     }
     const newConfig = { id: Date.now(), apiKey, proxyUrl, modelName };
-    const updatedConfigs = [...configs, newConfig];
-    setConfigs(updatedConfigs);
+    const updatedConfigs = [...proxyConfigs, newConfig];
     saveProxyConfigs(updatedConfigs);
+    refreshProxyConfigs(); // Refresh context
     setApiKey('');
     setProxyUrl('');
     setModelName('');
   };
 
   const handleDeleteProxy = (id) => {
-    const updatedConfigs = configs.filter(config => config.id !== id);
-    setConfigs(updatedConfigs);
+    const updatedConfigs = proxyConfigs.filter(config => config.id !== id);
     saveProxyConfigs(updatedConfigs);
     if (activeProxyId === id.toString()) {
-      saveActiveProxyId(null); // This will now use removeItem
       setActiveProxyId(null);
     }
-  };
-
-  const handleSetActiveProxy = (id) => {
-    saveActiveProxyId(id);
-    setActiveProxyId(id);
+    refreshProxyConfigs(); // Refresh context
   };
 
   const handleThemeChange = (newTheme) => {
@@ -171,9 +163,9 @@ const SettingsPage = () => {
         <h3>Proxy Configurations</h3>
         <div className={styles.configsList}>
           <h4>Saved Configurations</h4>
-          {configs.length === 0 ? <p>No proxy configurations saved.</p> : (
+          {proxyConfigs.length === 0 ? <p>No proxy configurations saved.</p> : (
             <ul>
-              {configs.map(config => (
+              {proxyConfigs.map(config => (
                 <li key={config.id} className={activeProxyId === config.id.toString() ? styles.activeItem : ''}>
                   <div className={styles.configDetails}>
                     <span>URL: {config.proxyUrl}</span>
@@ -183,7 +175,7 @@ const SettingsPage = () => {
                     {activeProxyId === config.id.toString() ? (
                       <span className={styles.activeLabel}>Active</span>
                     ) : (
-                      <button onClick={() => handleSetActiveProxy(config.id)}>Set Active</button>
+                      <button onClick={() => setActiveProxyId(config.id)}>Set Active</button>
                     )}
                     <button onClick={() => handleDeleteProxy(config.id)} className={styles.deleteButton}>Delete</button>
                   </div>

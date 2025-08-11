@@ -43,44 +43,68 @@ const CharacterCreatorPage = ({ characterId }) => {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const json = JSON.parse(event.target.result);
-        const charactersToImport = Array.isArray(json) ? json : [json];
+    const processImportedCharacters = (charactersToImport) => {
+      let importedCount = 0;
+      const existingCharacters = loadCharacters();
 
-        let importedCount = 0;
-        const existingCharacters = loadCharacters();
-
-        const newCharacters = charactersToImport.reduce((acc, char) => {
-          if (char.name && char.lore) {
-            acc.push({
-              id: Date.now() + importedCount,
-              name: char.name,
-              lore: char.lore,
-              scenario: char.scenario || '',
-              firstMessage: char.firstMessage || '',
-              image: char.image || null,
-            });
-            importedCount++;
-          }
-          return acc;
-        }, []);
-
-        if (newCharacters.length > 0) {
-          saveCharacters([...existingCharacters, ...newCharacters]);
-          alert(`${importedCount} character(s) imported successfully!`);
-          window.location.hash = '#/'; // Refresh to see the new characters on the home page
-        } else {
-          alert('No valid characters found in the JSON file.');
+      const newCharacters = charactersToImport.reduce((acc, char) => {
+        if (char.name && char.lore) {
+          acc.push({
+            id: Date.now() + importedCount,
+            name: char.name,
+            lore: char.lore,
+            scenario: char.scenario || '',
+            firstMessage: char.firstMessage || '',
+            image: char.image || null,
+          });
+          importedCount++;
         }
+        return acc;
+      }, []);
 
-      } catch (error) {
-        alert('Failed to parse JSON file. Please make sure it is valid.');
-        console.error("JSON Parse Error:", error);
+      if (newCharacters.length > 0) {
+        saveCharacters([...existingCharacters, ...newCharacters]);
+        alert(`${importedCount} character(s) imported successfully!`);
+        window.location.hash = '#/';
+      } else {
+        alert('No valid characters found in the file.');
       }
     };
-    reader.readAsText(file);
+
+    if (file.type === 'application/json') {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const json = JSON.parse(event.target.result);
+          const charactersToImport = Array.isArray(json) ? json : [json];
+          processImportedCharacters(charactersToImport);
+        } catch (error) {
+          alert('Failed to parse JSON file.');
+          console.error("JSON Parse Error:", error);
+        }
+      };
+      reader.readAsText(file);
+    } else if (file.type === 'image/png') {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const metadata = await window.exifr.parse(event.target.result);
+          if (metadata && metadata.chara) {
+            const charData = JSON.parse(atob(metadata.chara));
+            processImportedCharacters([charData]);
+          } else {
+            alert('No character data found in PNG metadata.');
+          }
+        } catch (error) {
+          alert('Failed to read character data from PNG.');
+          console.error("PNG Metadata Error:", error);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      alert('Unsupported file type. Please upload a .json or .png file.');
+    }
+
     e.target.value = null; // Reset file input
   };
 
@@ -135,7 +159,7 @@ const CharacterCreatorPage = ({ characterId }) => {
           type="file"
           ref={fileInputRef}
           style={{ display: 'none' }}
-          accept=".json"
+          accept=".json,.png"
           onChange={handleFileImport}
         />
       </div>

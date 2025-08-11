@@ -4,11 +4,14 @@ import './index.css';
 import './forms.css';
 import App from './App.jsx';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { ProxyProvider } from './contexts/ProxyContext';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ThemeProvider>
-      <App />
+      <ProxyProvider>
+        <App />
+      </ProxyProvider>
     </ThemeProvider>
   </StrictMode>,
 );

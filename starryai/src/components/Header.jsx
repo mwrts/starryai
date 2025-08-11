@@ -1,18 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import styles from './Header.module.css';
-import { getActiveProxy } from '../utils/localStorage';
+import { ProxyContext } from '../contexts/ProxyContext';
 
 const Header = () => {
-  const [activeModel, setActiveModel] = useState(null);
-
-  useEffect(() => {
-    const proxy = getActiveProxy();
-    if (proxy && proxy.modelName) {
-      setActiveModel(proxy.modelName);
-    } else {
-      setActiveModel(null);
-    }
-  }, []);
+  const { activeProxy } = useContext(ProxyContext);
+  const activeModelName = activeProxy?.modelName;
 
   return (
     <header className={styles.header}>
@@ -22,7 +14,7 @@ const Header = () => {
           <span>StarryAI</span>
         </a>
       </div>
-      {activeModel && <span className={styles.activeModel}>Active Model: {activeModel}</span>}
+      {activeModelName && <span className={styles.activeModel}>Active Model: {activeModelName}</span>}
       <nav className={styles.nav}>
         <a href="/#/">Home</a>
         <a href="/#/characters">Create Character</a>
