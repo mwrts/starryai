@@ -175,7 +175,7 @@ const SettingsPage = () => {
                     {activeProxyId === config.id.toString() ? (
                       <span className={styles.activeLabel}>Active</span>
                     ) : (
-                      <button onClick={() => setActiveProxyId(config.id)}>Set Active</button>
+                      <button onClick={() => setActiveProxyId(config.id.toString())}>Set Active</button>
                     )}
                     <button onClick={() => handleDeleteProxy(config.id)} className={styles.deleteButton}>Delete</button>
                   </div>
