@@ -7,7 +7,14 @@ const Layout = ({ children }) => {
   const { uiSettings } = useContext(UISettingsContext);
 
   return (
-    <div className={`${styles.layout} ${uiSettings.starsEnabled ? styles.starsActive : ''}`}>
+    <div className={styles.layout}>
+      {uiSettings.starsEnabled && (
+        <div className={styles.starsContainer}>
+          <div className={styles.stars}></div>
+          <div className={styles.stars2}></div>
+          <div className={styles.stars3}></div>
+        </div>
+      )}
       <Header />
       <main className={styles.main}>
         {children}
