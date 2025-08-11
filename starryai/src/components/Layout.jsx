@@ -1,22 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import styles from './Layout.module.css';
 import Header from './Header';
-import { loadUISettings } from '../utils/localStorage';
+import { UISettingsContext } from '../contexts/UISettingsContext';
 
 const Layout = ({ children }) => {
-  const [uiSettings, setUiSettings] = useState(loadUISettings());
-
-  // This effect will be needed if we want the background to update without a refresh
-  // For now, it loads on mount which is sufficient for a setting that isn't changed often.
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setUiSettings(loadUISettings());
-    };
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+  const { uiSettings } = useContext(UISettingsContext);
 
   return (
     <div className={`${styles.layout} ${uiSettings.starsEnabled ? styles.starsActive : ''}`}>

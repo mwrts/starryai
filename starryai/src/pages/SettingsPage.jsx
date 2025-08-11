@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styles from './SettingsPage.module.css';
-import { saveProxyConfigs, loadPersona, savePersona, loadGenerationSettings, saveGenerationSettings, loadUISettings, saveUISettings } from '../utils/localStorage';
+import { saveProxyConfigs, loadPersona, savePersona, loadGenerationSettings, saveGenerationSettings } from '../utils/localStorage';
 import { ThemeContext, themes } from '../contexts/ThemeContext';
 import { ProxyContext } from '../contexts/ProxyContext';
+import { UISettingsContext } from '../contexts/UISettingsContext';
 
 const SettingsPage = () => {
   const { proxyConfigs, activeProxyId, setActiveProxyId, refreshProxyConfigs } = useContext(ProxyContext);
+  const { uiSettings, setUiSettings } = useContext(UISettingsContext);
   const [apiKey, setApiKey] = useState('');
   const [proxyUrl, setProxyUrl] = useState('');
   const [modelName, setModelName] = useState('');
   const [persona, setPersona] = useState('');
   const [generationSettings, setGenerationSettings] = useState(loadGenerationSettings());
-  const [uiSettings, setUiSettings] = useState(loadUISettings());
 
   const { theme, setTheme } = useContext(ThemeContext);
   const [customTheme, setCustomTheme] = useState(theme);
@@ -83,10 +84,6 @@ const SettingsPage = () => {
     const { name, checked } = e.target;
     setUiSettings(prev => ({ ...prev, [name]: checked }));
   };
-
-  useEffect(() => {
-    saveUISettings(uiSettings);
-  }, [uiSettings]);
 
   return (
     <div className={styles.page}>
