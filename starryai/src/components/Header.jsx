@@ -19,6 +19,7 @@ const Header = () => {
       <div className={styles.logo}>
         <a href="/#/">
           <img src="https://cdn.discordapp.com/attachments/1402748839462699162/1404293414337515670/STARRY.png?ex=689aa9a8&is=68995828&hm=9bad03862c7c357d8f1b3a673bbb757fc726aca83ca6488db9c45be5d7b0afc5&" alt="StarryAI Logo" />
+          <span>StarryAI</span>
         </a>
       </div>
       {activeModel && <span className={styles.activeModel}>Active Model: {activeModel}</span>}
