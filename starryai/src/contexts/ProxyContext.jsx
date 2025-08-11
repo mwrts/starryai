@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 import { loadActiveProxyId, saveActiveProxyId, loadProxyConfigs } from '../utils/localStorage';
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -12,24 +12,27 @@ export const ProxyProvider = ({ children }) => {
     saveActiveProxyId(activeProxyId);
   }, [activeProxyId]);
 
-  // Function to refresh configs from storage, useful after changes on settings page
   const refreshProxyConfigs = () => {
     setProxyConfigs(loadProxyConfigs());
     setActiveProxyId(loadActiveProxyId());
   };
 
-  const activeProxy = activeProxyId
-    ? proxyConfigs.find(c => c.id.toString() === activeProxyId)
-    : proxyConfigs[0];
+  const activeProxy = useMemo(() => {
+    return activeProxyId
+      ? proxyConfigs.find(c => c.id.toString() === activeProxyId)
+      : proxyConfigs[0];
+  }, [activeProxyId, proxyConfigs]);
+
+  const value = useMemo(() => ({
+    proxyConfigs,
+    activeProxyId,
+    setActiveProxyId,
+    activeProxy,
+    refreshProxyConfigs
+  }), [proxyConfigs, activeProxyId, activeProxy]);
 
   return (
-    <ProxyContext.Provider value={{
-      proxyConfigs,
-      activeProxyId,
-      setActiveProxyId,
-      activeProxy,
-      refreshProxyConfigs
-    }}>
+    <ProxyContext.Provider value={value}>
       {children}
     </ProxyContext.Provider>
   );
