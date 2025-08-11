@@ -45,8 +45,8 @@ const SettingsPage = () => {
     const updatedConfigs = configs.filter(config => config.id !== id);
     setConfigs(updatedConfigs);
     saveProxyConfigs(updatedConfigs);
-    if (activeProxyId === id) {
-      saveActiveProxyId(null);
+    if (activeProxyId === id.toString()) {
+      saveActiveProxyId(null); // This will now use removeItem
       setActiveProxyId(null);
     }
   };
@@ -174,13 +174,13 @@ const SettingsPage = () => {
           {configs.length === 0 ? <p>No proxy configurations saved.</p> : (
             <ul>
               {configs.map(config => (
-                <li key={config.id} className={activeProxyId === config.id ? styles.activeItem : ''}>
+                <li key={config.id} className={activeProxyId === config.id.toString() ? styles.activeItem : ''}>
                   <div className={styles.configDetails}>
                     <span>URL: {config.proxyUrl}</span>
                     <span>Model: {config.modelName || 'Not set'}</span>
                   </div>
                   <div className={styles.configActions}>
-                    {activeProxyId === config.id ? (
+                    {activeProxyId === config.id.toString() ? (
                       <span className={styles.activeLabel}>Active</span>
                     ) : (
                       <button onClick={() => handleSetActiveProxy(config.id)}>Set Active</button>

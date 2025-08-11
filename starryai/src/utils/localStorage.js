@@ -26,7 +26,11 @@ const ACTIVE_PROXY_ID_KEY = 'janitor_ai_clone_active_proxy_id';
 
 export const saveActiveProxyId = (id) => {
   try {
-    localStorage.setItem(ACTIVE_PROXY_ID_KEY, id);
+    if (id === null || id === undefined) {
+      localStorage.removeItem(ACTIVE_PROXY_ID_KEY);
+    } else {
+      localStorage.setItem(ACTIVE_PROXY_ID_KEY, id);
+    }
   } catch (e) {
     console.error("Could not save active proxy id.", e);
   }
