@@ -1,11 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './CharacterCreatorPage.module.css';
 import { loadCharacters, saveCharacters } from '../utils/localStorage';
 
-const CharacterCreatorPage = () => {
+const CharacterCreatorPage = ({ characterId }) => {
   const [name, setName] = useState('');
   const [lore, setLore] = useState('');
+  const [firstMessage, setFirstMessage] = useState('');
   const [image, setImage] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (characterId) {
+      setIsEditMode(true);
+      const characters = loadCharacters();
+      const characterToEdit = characters.find(c => c.id.toString() === characterId);
+      if (characterToEdit) {
+        setName(characterToEdit.name);
+        setLore(characterToEdit.lore);
+        setFirstMessage(characterToEdit.firstMessage || '');
+        setImage(characterToEdit.image || null);
+      }
+    }
+  }, [characterId]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -18,6 +35,52 @@ const CharacterCreatorPage = () => {
     }
   };
 
+  const handleFileImport = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const json = JSON.parse(event.target.result);
+        const charactersToImport = Array.isArray(json) ? json : [json];
+
+        let importedCount = 0;
+        const existingCharacters = loadCharacters();
+
+        const newCharacters = charactersToImport.reduce((acc, char) => {
+          if (char.name && char.lore) {
+            acc.push({
+              id: Date.now() + importedCount,
+              name: char.name,
+              lore: char.lore,
+              firstMessage: char.firstMessage || '',
+              image: char.image || null,
+            });
+            importedCount++;
+          }
+          return acc;
+        }, []);
+
+        if (newCharacters.length > 0) {
+          saveCharacters([...existingCharacters, ...newCharacters]);
+          alert(`${importedCount} character(s) imported successfully!`);
+          window.location.hash = '#/'; // Refresh to see the new characters on the home page
+        } else {
+          alert('No valid characters found in the JSON file.');
+        }
+
+      } catch (error) {
+        alert('Failed to parse JSON file. Please make sure it is valid.');
+        console.error("JSON Parse Error:", error);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = null; // Reset file input
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name || !lore) {
@@ -25,28 +88,53 @@ const CharacterCreatorPage = () => {
       return;
     }
 
-    const newCharacter = {
-      id: Date.now(),
-      name,
-      lore,
-      image,
-    };
-
     const characters = loadCharacters();
-    saveCharacters([...characters, newCharacter]);
 
-    // Clear form
-    setName('');
-    setLore('');
-    setImage(null);
-    e.target.reset();
-
-    alert('Character created successfully!');
+    if (isEditMode) {
+      const updatedCharacters = characters.map(c => {
+        if (c.id.toString() === characterId) {
+          return { ...c, name, lore, image, firstMessage };
+        }
+        return c;
+      });
+      saveCharacters(updatedCharacters);
+      alert('Character updated successfully!');
+      window.location.hash = '#/'; // Go back to home page
+    } else {
+      const newCharacter = {
+        id: Date.now(),
+        name,
+        lore,
+        image,
+        firstMessage,
+      };
+      saveCharacters([...characters, newCharacter]);
+      alert('Character created successfully!');
+      // Clear form
+      setName('');
+      setLore('');
+      setFirstMessage('');
+      setImage(null);
+      e.target.reset();
+    }
   };
 
   return (
     <div className={styles.page}>
-      <h2>Create a New Character</h2>
+      <div className={styles.pageHeader}>
+        <h2>{isEditMode ? 'Edit Character' : 'Create a New Character'}</h2>
+        <button type="button" onClick={() => fileInputRef.current.click()}>
+          Import from JSON
+        </button>
+        <input
+          type="file"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+          accept=".json"
+          onChange={handleFileImport}
+        />
+      </div>
+      <hr />
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
           <label htmlFor="name">Name</label>
@@ -69,6 +157,16 @@ const CharacterCreatorPage = () => {
           ></textarea>
         </div>
         <div className={styles.formGroup}>
+          <label htmlFor="firstMessage">First Message</label>
+          <textarea
+            id="firstMessage"
+            name="firstMessage"
+            rows="3"
+            value={firstMessage}
+            onChange={(e) => setFirstMessage(e.target.value)}
+          ></textarea>
+        </div>
+        <div className={styles.formGroup}>
           <label htmlFor="image">Image</label>
           <input
             type="file"
@@ -78,7 +176,9 @@ const CharacterCreatorPage = () => {
             onChange={handleImageChange}
           />
         </div>
-        <button type="submit" className={styles.submitButton}>Create Character</button>
+        <button type="submit" className={styles.submitButton}>
+          {isEditMode ? 'Update Character' : 'Create Character'}
+        </button>
       </form>
     </div>
   );
