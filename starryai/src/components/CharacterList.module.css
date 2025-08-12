@@ -27,3 +27,14 @@
   background-color: #dc3545;
   color: white;
 }
+
+@media (max-width: 768px) {
+  .modalButtons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .modalButtons button {
+    width: 100%;
+  }
+}

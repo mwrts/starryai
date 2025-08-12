@@ -21,7 +21,7 @@
 /* Starfield effect */
 @keyframes animStar {
   from {
-    transform: translateY(0px);
+    transform: translateY(2000px);
   }
   to {
     transform: translateY(-2000px);
@@ -65,7 +65,7 @@
 
 .stars, .stars2, .stars3 {
   position: absolute;
-  top: 0;
+  top: -2000px;
   left: 0;
   width: 1px;
   height: 1px;
