@@ -1,19 +1,25 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styles from './SettingsPage.module.css';
-import { loadProxyConfigs, saveProxyConfigs } from '../utils/localStorage';
+import { saveProxyConfigs, loadPersona, savePersona, loadGenerationSettings, saveGenerationSettings } from '../utils/localStorage';
 import { ThemeContext, themes } from '../contexts/ThemeContext';
+import { ProxyContext } from '../contexts/ProxyContext';
+import { UISettingsContext } from '../contexts/UISettingsContext';
 
 const SettingsPage = () => {
-  const [configs, setConfigs] = useState([]);
+  const { proxyConfigs, activeProxyId, setActiveProxyId, refreshProxyConfigs } = useContext(ProxyContext);
+  const { uiSettings, setUiSettings } = useContext(UISettingsContext);
   const [apiKey, setApiKey] = useState('');
   const [proxyUrl, setProxyUrl] = useState('');
   const [modelName, setModelName] = useState('');
+  const [persona, setPersona] = useState('');
+  const [generationSettings, setGenerationSettings] = useState(loadGenerationSettings());
 
   const { theme, setTheme } = useContext(ThemeContext);
   const [customTheme, setCustomTheme] = useState(theme);
 
   useEffect(() => {
-    setConfigs(loadProxyConfigs());
+    setPersona(loadPersona());
+    setGenerationSettings(loadGenerationSettings());
   }, []);
 
   useEffect(() => {
@@ -27,18 +33,21 @@ const SettingsPage = () => {
       return;
     }
     const newConfig = { id: Date.now(), apiKey, proxyUrl, modelName };
-    const updatedConfigs = [...configs, newConfig];
-    setConfigs(updatedConfigs);
+    const updatedConfigs = [...proxyConfigs, newConfig];
     saveProxyConfigs(updatedConfigs);
+    refreshProxyConfigs(); // Refresh context
     setApiKey('');
     setProxyUrl('');
     setModelName('');
   };
 
   const handleDeleteProxy = (id) => {
-    const updatedConfigs = configs.filter(config => config.id !== id);
-    setConfigs(updatedConfigs);
+    const updatedConfigs = proxyConfigs.filter(config => config.id !== id);
     saveProxyConfigs(updatedConfigs);
+    if (activeProxyId === id.toString()) {
+      setActiveProxyId(null);
+    }
+    refreshProxyConfigs(); // Refresh context
   };
 
   const handleThemeChange = (newTheme) => {
@@ -52,9 +61,98 @@ const SettingsPage = () => {
     setTheme(newCustomTheme);
   };
 
+  const handlePersonaChange = (e) => {
+    setPersona(e.target.value);
+  };
+
+  const handlePersonaSubmit = (e) => {
+    e.preventDefault();
+    savePersona(persona);
+    alert('Persona saved successfully!');
+  };
+
+  const handleGenerationSettingsChange = (e) => {
+    const { name, value } = e.target;
+    setGenerationSettings(prev => ({ ...prev, [name]: parseInt(value, 10) }));
+  };
+
+  useEffect(() => {
+    saveGenerationSettings(generationSettings);
+  }, [generationSettings]);
+
+  const handleUISettingsChange = (e) => {
+    const { name, checked } = e.target;
+    setUiSettings(prev => ({ ...prev, [name]: checked }));
+  };
+
   return (
     <div className={styles.page}>
       <h2>Settings</h2>
+
+      <div className={styles.section}>
+        <h3>UI Settings</h3>
+        <div className={styles.formGroup}>
+          <label className={styles.toggleLabel}>
+            <span>Enable Starry Background</span>
+            <input
+              type="checkbox"
+              name="starsEnabled"
+              checked={uiSettings.starsEnabled}
+              onChange={handleUISettingsChange}
+            />
+          </label>
+        </div>
+      </div>
+
+      <div className={styles.section}>
+        <h3>Generation Settings</h3>
+        <div className={styles.form}>
+          <div className={styles.formGroup}>
+            <label htmlFor="maxTokens">Max Tokens: {generationSettings.maxTokens}</label>
+            <input
+              type="range"
+              id="maxTokens"
+              name="maxTokens"
+              min="100"
+              max="2000"
+              step="100"
+              value={generationSettings.maxTokens}
+              onChange={handleGenerationSettingsChange}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="contextWindowSize">Context Window (characters): {generationSettings.contextWindowSize}</label>
+            <input
+              type="range"
+              id="contextWindowSize"
+              name="contextWindowSize"
+              min="1000"
+              max="128000"
+              step="1000"
+              value={generationSettings.contextWindowSize}
+              onChange={handleGenerationSettingsChange}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.section}>
+        <h3>User Persona</h3>
+        <form onSubmit={handlePersonaSubmit} className={styles.form}>
+          <div className={styles.formGroup}>
+            <label htmlFor="persona">Your Persona</label>
+            <textarea
+              id="persona"
+              name="persona"
+              rows="5"
+              value={persona}
+              onChange={handlePersonaChange}
+              placeholder="Describe yourself to the bot. This will be sent with every message."
+            ></textarea>
+          </div>
+          <button type="submit" className={styles.submitButton}>Save Persona</button>
+        </form>
+      </div>
 
       <div className={styles.section}>
         <h3>Theme Customization</h3>
@@ -87,13 +185,22 @@ const SettingsPage = () => {
         <h3>Proxy Configurations</h3>
         <div className={styles.configsList}>
           <h4>Saved Configurations</h4>
-          {configs.length === 0 ? <p>No proxy configurations saved.</p> : (
+          {proxyConfigs.length === 0 ? <p>No proxy configurations saved.</p> : (
             <ul>
-              {configs.map(config => (
-                <li key={config.id}>
-                  <span>URL: {config.proxyUrl}</span>
-                  <span>Model: {config.modelName || 'Not set'}</span>
-                  <button onClick={() => handleDeleteProxy(config.id)} className={styles.deleteButton}>Delete</button>
+              {proxyConfigs.map(config => (
+                <li key={config.id} className={activeProxyId === config.id.toString() ? styles.activeItem : ''}>
+                  <div className={styles.configDetails}>
+                    <span>URL: {config.proxyUrl}</span>
+                    <span>Model: {config.modelName || 'Not set'}</span>
+                  </div>
+                  <div className={styles.configActions}>
+                    {activeProxyId === config.id.toString() ? (
+                      <span className={styles.activeLabel}>Active</span>
+                    ) : (
+                      <button onClick={() => setActiveProxyId(config.id.toString())}>Set Active</button>
+                    )}
+                    <button onClick={() => handleDeleteProxy(config.id)} className={styles.deleteButton}>Delete</button>
+                  </div>
                 </li>
               ))}
             </ul>

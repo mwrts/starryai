@@ -29,27 +29,15 @@
   font-weight: bold;
 }
 
+.toggleLabel {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .formGroup input {
-  padding: 0.75rem;
-  border-radius: 4px;
-  border: 1px solid var(--border-color);
-  background-color: var(--main-bg-color);
-  color: var(--text-color);
-  font-size: 1rem;
-}
-
-.submitButton {
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  background-color: var(--accent-color);
-  color: var(--text-color);
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.submitButton:hover {
-  opacity: 0.8;
+  /* Most styles are now global */
+  background-color: var(--main-bg-color); /* Keep this override */
 }
 
 .configsList ul {
@@ -69,14 +57,31 @@
   border-bottom: none;
 }
 
+.activeItem {
+  background-color: rgba(0, 123, 255, 0.1);
+  border-left: 3px solid var(--accent-color);
+}
+
+.configDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.configActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.activeLabel {
+  font-weight: bold;
+  color: var(--accent-color);
+}
+
 .deleteButton {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  border: none;
+  /* Let global button styles apply, just override color */
   background-color: #dc3545;
-  color: white;
-  font-size: 0.9rem;
-  cursor: pointer;
 }
 
 .deleteButton:hover {
@@ -88,11 +93,12 @@
   padding: 1.5rem;
   border-radius: 8px;
   margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
 }
 
 .section h3 {
   margin-top: 0;
-  border-bottom: 1px solid var(--border-color);
   padding-bottom: 1rem;
   margin-bottom: 1rem;
 }
@@ -105,12 +111,9 @@
 }
 
 .themeSelector button {
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  /* Let global button styles apply, just override background */
+  background-color: var(--secondary-bg-color);
   border: 1px solid var(--border-color);
-  background-color: var(--main-bg-color);
-  color: var(--text-color);
-  cursor: pointer;
 }
 
 .themeEditor {
