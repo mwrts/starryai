@@ -16,8 +16,8 @@ const ChatHeader = ({ character, modelName }) => {
         </div>
       </div>
       <div className={styles.actions}>
-        <a href="/#/settings" className={styles.settingsButton}>
-          ⚙️
+        <a href={`/#/character/edit/${character.id}`} className={styles.settingsButton}>
+          ✏️
         </a>
       </div>
     </header>
