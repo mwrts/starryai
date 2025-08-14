@@ -2,9 +2,121 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: var(--main-bg-color);
+  position: relative;
+  overflow: hidden;
 }
 
 .main {
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  background: transparent;
   padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Starfield effect */
+@keyframes animStar {
+  from {
+    transform: translateY(2000px);
+  }
+  to {
+    transform: translateY(-2000px);
+  }
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
+@keyframes shooting-star {
+  0% {
+    transform: translateX(-300px) translateY(-300px) rotate(45deg);
+    opacity: 1;
+  }
+  8% {
+    transform: translateX(1200px) translateY(800px) rotate(45deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(1200px) translateY(800px) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+.starsContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  background: linear-gradient(
+    to top,
+    rgba(var(--accent-color-rgb), 0.3) 0%,
+    transparent 40%
+  ), #0c0a1f;
+}
+
+.stars, .stars2, .stars3 {
+  position: absolute;
+  top: -2000px;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  animation: animStar 150s linear infinite;
+}
+
+.stars2 {
+  width: 2px;
+  height: 2px;
+  animation: animStar 100s linear infinite;
+  animation-delay: -25s;
+}
+
+.stars3 {
+  width: 1px;
+  height: 1px;
+  animation: animStar 200s linear infinite, twinkle 7s alternate infinite;
+  animation-delay: -50s;
+}
+
+.shootingStar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 2px;
+  background: linear-gradient(-45deg, #f1c40f, rgba(0, 0, 255, 0));
+  border-radius: 999px;
+  filter: drop-shadow(0 0 6px #f1c40f);
+  animation: shooting-star 30s ease-in-out infinite;
+}
+
+.shootingStar:nth-of-type(2) {
+  top: 20%;
+  left: 0;
+  animation-delay: -5s;
+}
+
+.shootingStar:nth-of-type(3) {
+  top: 80%;
+  left: 20%;
+  animation-delay: -13s;
+}
+
+/* Re-generated box-shadows for a more random distribution */
+.stars {
+  box-shadow: 626px 1029px #FFF, 153px 1118px #FFF, 1109px 1192px #FFF, 119px 1780px #FFF, 1324px 1883px #FFF, 1030px 1058px #FFF, 1480px 1419px #FFF, 1445px 1395px #FFF, 103px 150px #FFF, 1251px 110px #FFF, 106px 1014px #FFF, 1261px 1162px #FFF, 1495px 1266px #FFF, 1913px 1886px #FFF, 1533px 1827px #FFF, 1862px 158px #FFF, 179px 142px #FFF, 140px 125px #FFF, 1760px 1282px #FFF, 1154px 1247px #FFF, 1989px 1585px #FFF, 1476px 1109px #FFF, 1750px 1645px #FFF, 194px 1332px #FFF, 1253px 1195px #FFF, 166px 1485px #FFF, 1500px 1047px #FFF, 1509px 1883px #FFF, 1898px 1228px #FFF, 1199px 728px #FFF, 1682px 1974px #FFF, 743px 1845px #FFF, 817px 1572px #FFF, 1989px 188px #FFF, 118px 1598px #FFF, 1860px 1406px #FFF, 1436px 1030px #FFF, 1372px 1058px #FFF, 203px 1480px #FFF, 1214px 103px #FFF, 1613px 1395px #FFF, 424px 1251px #FFF, 1421px 106px #FFF, 148px 1276px #FFF, 1045px 1510px #FFF, 1251px 1928px #FFF, 1073px 192px #FFF, 163px 1901px #FFF, 1495px 1877px #FFF, 1460px 1842px #FFF;
+}
+.stars2 {
+  box-shadow: 1729px 1900px #FFF, 186px 1221px #FFF, 442px 1869px #FFF, 1235px 1218px #FFF, 1555px 1083px #FFF, 183px 1192px #FFF, 1878px 1376px #FFF, 108px 1210px #FFF, 1903px 1393px #FFF, 1889px 1248px #FFF, 117px 1156px #FFF, 139px 1324px #FFF, 103px 1358px #FFF, 106px 1152px #FFF, 118px 1316px #FFF, 104px 1269px #FFF, 116px 1265px #FFF, 104px 1199px #FFF, 117px 1356px #FFF, 104px 1292px #FFF, 117px 1313px #FFF, 104px 1226px #FFF, 117px 1281px #FFF, 104px 1296px #FFF, 1056px 1136px #FFF, 539px 1779px #FFF, 1500px 1754px #FFF, 1025px 186px #FFF, 1404px 1163px #FFF, 1456px 1380px #FFF, 1475px 1166px #FFF, 1801px 1121px #FFF, 1535px 1363px #FFF, 1716px 1289px #FFF, 133px 1198px #FFF, 175px 1382px #FFF, 106px 1293px #FFF, 131px 1162px #FFF, 105px 1276px #FFF, 105px 1304px #FFF, 117px 1346px #FFF, 104px 1258px #FFF, 117px 1238px #FFF, 104px 1180px #FFF, 117px 1229px #FFF, 104px 1280px #FFF, 117px 1275px #FFF, 104px 1321px #FFF, 117px 1283px #FFF;
+}
+.stars3 {
+  box-shadow: 1793px 1754px #FFF, 1731px 186px #FFF, 43px 1163px #FFF, 1238px 1106px #FFF, 174px 1240px #FFF, 1133px 1100px #FFF, 1545px 1186px #FFF, 101px 1392px #FFF, 130px 1198px #FFF, 1301px 1324px #FFF, 131px 1334px #FFF, 139px 1252px #FFF, 131px 1159px #FFF, 115px 1269px #FFF, 105px 1265px #FFF, 118px 1286px #FFF, 117px 1292px #FFF, 117px 1297px #FFF, 117px 1275px #FFF, 117px 1283px #FFF, 1735px 1599px #FFF, 1273px 1856px #FFF, 1373px 1379px #FFF, 1690px 1316px #FFF, 1845px 1263px #FFF, 1445px 1374px #FFF, 1195px 1119px #FFF, 1247px 1319px #FFF, 1282px 1193px #FFF, 1109px 1210px #FFF, 179px 1590px #FFF, 1645px 549px #FFF, 1238px 499px #FFF, 1332px 1891px #FFF, 151px 115px #FFF, 1195px 25px #FFF, 1485px 178px #FFF, 1509px 145px #FFF, 1898px 1936px #FFF, 1199px 1515px #FFF, 1682px 1459px #FFF, 743px 1193px #FFF, 817px 1530px #FFF, 1989px 1118px #FFF, 118px 1695px #FFF, 1860px 786px #FFF, 1436px 1333px #FFF, 1587px 1899px #FFF, 1372px 1205px #FFF, 203px 219px #FFF, 1214px 1490px #FFF, 1613px 1931px #FFF, 424px 532px #FFF, 1421px 1075px #FFF, 148px 133px #FFF, 1045px 706px #FFF, 1251px 193px #FFF, 1073px 936px #FFF, 163px 111px #FFF, 1495px 1103px #FFF, 1460px 1245px #FFF, 118px 1458px #FFF, 1434px 1324px #FFF, 1410px 119px #FFF, 1316px 1948px #FFF, 1266px 1326px #FFF, 165px 126px #FFF, 128px 106px #FFF, 129px 127px #FFF, 125px 1856px #FFF, 1276px 376px #FFF, 1029px 188px #FFF, 1510px 834px #FFF, 1177px 1083px #FFF, 1928px 137px #FFF, 1281px 1968px #FFF, 192px 1239px #FFF, 1548px 103px #FFF, 1901px 1457px #FFF, 1877px 1133px #FFF, 1842px 142px #FFF;
 }
